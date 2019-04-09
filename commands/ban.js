@@ -1,20 +1,26 @@
-module.exports = (client, message, args) => {
-    if (command === "ban") {
-        // Most of this command is identical to kick, except that here we'll only let admins do it.
-        // In the real world mods could ban too, but this is just an example, right? ;)
-        if (!message.member.roles.some(r => ["Administrator"].includes(r.name)))
-            return message.reply("Sorry, you don't have permissions to use this!");
+module.exports.run = async (client, message, args) => {
+    let bUser = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0]));
+    if (!bUser) return message.channel.send("Couldn't find user.");
+    args.shift();
+    let breason = args.join(" ");
+    if (message.member.hasPermission("MANAGE_MEMBERS")) return message.channel.send("You don't have the authority to command me");
+    if (kUser.hasPermission("MANAGE_MESSAGES")) return message.channel.send("That person can't be kicked");
 
-        let member = message.mentions.members.first();
-        if (!member)
-            return message.reply("Please mention a valid member of this server");
-        if (!member.bannable)
-            return message.reply("I cannot ban this user! Do they have a higher role? Do I have ban permissions?");
+    let banEmbed = new Discord.RichEmbed()
+        .setDescription("~Ban~")
+        .setColor("#be6800")
+        .addField("Kicked User", `${kUser} with ID ${bUser.id}`)
+        .addField("Kicked By", `<@${message.author.id}> with ID: ${message.author.id}`)
+        .addField("Kicked In", message.channel)
+        .addField("Time", message.createdAt)
+        .addField("reason", breason);
 
-        let reason = args.slice(1).join(' ');
-        if (!reason) reason = "No reason provided";
+    let banChannel = message.guild.channels.find(`name`, "everything");
+    if (!banChannel) return message.channel.send("Can't find correct channel.");
 
-        await member.ban(reason)
-            .catch(error => message.reply('Sorry ' + message.author + ' I couldnt ban because of : ' + error));
-        message.reply(member.user.tag + ' has been banned by ' + message.author.tag + ' because: ' + reason);
+    message.guild.member(bUser).ban(breason);
+    banChannel.send(banEmbed);
+}
+module.exports.help = {
+    name: "ban"
 }
