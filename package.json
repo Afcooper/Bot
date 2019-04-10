@@ -10,7 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "discord.js": "^11.4.2",
-    "ms": "^2.1.1"
+    "ms": "^2.1.1",
+    "nodemon": "^1.18.11"
   },
   "devDependencies": {},
   "description": ""
